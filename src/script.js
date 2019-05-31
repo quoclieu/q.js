@@ -1,27 +1,28 @@
-import createElement from './createElement';
 import render from './render';
 import mount from './mount';
 
-const app = createElement({
+const app = {
   type: 'div',
   attributes: {
-    id: 'container'
+    class: 'container'
   },
   children: [
-    'hello word',
-    createElement({
+    {
       type: 'ul',
-      attributes: {
-        className: 'shopping list'
-      },
       children: [
-        createElement({
+        {
           type: 'li',
+          class: 'list-item',
           children: ['apple']
-        })
+        },
+        {
+          type: 'li',
+          class: 'list-item',
+          children: ['oranges']
+        }
       ]
-    })
+    }
   ]
-});
+};
 
 let root = mount(render(app), document.getElementById('app'));

@@ -117,31 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"createElement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _default = function _default() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      type = _ref.type,
-      _ref$attributes = _ref.attributes,
-      attributes = _ref$attributes === void 0 ? {} : _ref$attributes,
-      _ref$children = _ref.children,
-      children = _ref$children === void 0 ? [] : _ref$children;
-
-  return {
-    type: type,
-    attributes: attributes,
-    children: children
-  };
-};
-
-exports.default = _default;
-},{}],"render.js":[function(require,module,exports) {
+})({"render.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -157,31 +133,32 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-var renderElement = function renderElement(node) {
-  var nodeElement = document.createElement(node.type); // set attributes
-
-  for (var _i = 0, _Object$entries = Object.entries(node.attributes); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-        key = _Object$entries$_i[0],
-        value = _Object$entries$_i[1];
-
-    nodeElement.setAttribute(key, value);
-  } //set children
-
-
-  node.children.forEach(function (child) {
-    var childElement = render(child);
-    nodeElement.appendChild(childElement);
-  });
-  return nodeElement;
-};
-
 var render = function render(node) {
   if (typeof node === 'string') {
     return document.createTextNode(node);
   }
 
-  return renderElement(node);
+  var _node$type = node.type,
+      type = _node$type === void 0 ? '' : _node$type,
+      _node$attributes = node.attributes,
+      attributes = _node$attributes === void 0 ? {} : _node$attributes,
+      _node$children = node.children,
+      children = _node$children === void 0 ? [] : _node$children;
+  var element = document.createElement(type);
+
+  for (var _i = 0, _Object$entries = Object.entries(attributes); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        key = _Object$entries$_i[0],
+        value = _Object$entries$_i[1];
+
+    element.setAttribute(key, value);
+  }
+
+  children.forEach(function (child) {
+    var childElement = render(child);
+    element.appendChild(childElement);
+  });
+  return element;
 };
 
 var _default = render;
@@ -203,32 +180,32 @@ exports.default = _default;
 },{}],"script.js":[function(require,module,exports) {
 "use strict";
 
-var _createElement = _interopRequireDefault(require("./createElement"));
-
 var _render = _interopRequireDefault(require("./render"));
 
 var _mount = _interopRequireDefault(require("./mount"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var app = (0, _createElement.default)({
+var app = {
   type: 'div',
   attributes: {
-    id: 'container'
+    class: 'container'
   },
-  children: ['hello word', (0, _createElement.default)({
+  children: [{
     type: 'ul',
-    attributes: {
-      className: 'shopping list'
-    },
-    children: [(0, _createElement.default)({
+    children: [{
       type: 'li',
+      class: 'list-item',
       children: ['apple']
-    })]
-  })]
-});
+    }, {
+      type: 'li',
+      class: 'list-item',
+      children: ['oranges']
+    }]
+  }]
+};
 var root = (0, _mount.default)((0, _render.default)(app), document.getElementById('app'));
-},{"./createElement":"createElement.js","./render":"render.js","./mount":"mount.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./render":"render.js","./mount":"mount.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
