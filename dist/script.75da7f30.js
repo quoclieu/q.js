@@ -138,8 +138,7 @@ var render = function render(node) {
     return document.createTextNode(node);
   }
 
-  var _node$type = node.type,
-      type = _node$type === void 0 ? '' : _node$type,
+  var type = node.type,
       _node$attributes = node.attributes,
       attributes = _node$attributes === void 0 ? {} : _node$attributes,
       _node$children = node.children,
@@ -177,16 +176,212 @@ var _default = function _default(nodeElement, target) {
 };
 
 exports.default = _default;
-},{}],"script.js":[function(require,module,exports) {
+},{}],"diff.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _render = _interopRequireDefault(require("./render"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var zip = function zip(xs, ys) {
+  var zipped = [];
+
+  for (var i = 0; i < Math.max(xs.length, ys.length); i++) {
+    zipped.push([xs[i], ys[i]]);
+  }
+
+  return zipped;
+};
+
+var updateAttributes = function updateAttributes() {
+  var oldAtt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var newAtt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var node = arguments.length > 2 ? arguments[2] : undefined;
+
+  for (var _i = 0, _Object$entries = Object.entries(oldAtt); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        key = _Object$entries$_i[0],
+        value = _Object$entries$_i[1];
+
+    node.setAttribute(key, value);
+  }
+
+  for (var _i2 = 0, _Object$entries2 = Object.entries(oldAtt); _i2 < _Object$entries2.length; _i2++) {
+    var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 1),
+        key = _Object$entries2$_i[0];
+
+    if (!(key in newAtt)) {
+      node.removeAttribute(key);
+    }
+  }
+
+  return node;
+};
+
+var diffChildren = function diffChildren() {
+  var oldChildren = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var newChildren = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var patches = [];
+  oldChildren.forEach(function (oldChild, i) {
+    patches.push(diff(oldChild, newChildren[i]));
+  });
+  var additionalPatches = [];
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    var _loop = function _loop() {
+      var additionalChild = _step.value;
+      additionalPatches.push(function (DOMNode) {
+        DOMNode.appendChild((0, _render.default)(additionalChild));
+        return DOMNode;
+      });
+    };
+
+    for (var _iterator = newChildren.slice(oldChildren.length)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      _loop();
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  return function (parent) {
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = zip(patches, parent.childNodes)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var _step2$value = _slicedToArray(_step2.value, 2),
+            patch = _step2$value[0],
+            child = _step2$value[1];
+
+        patch(child);
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+
+    additionalPatches.forEach(function (patch) {
+      return patch(parent);
+    });
+    return parent;
+  };
+};
+
+var diff = function diff(oldNode, newNode) {
+  if (!newNode) {
+    return function (DOMNode) {
+      DOMNode.remove();
+      return undefined;
+    };
+  }
+
+  if (typeof oldNode === 'string' || typeof newNode === 'string') {
+    if (oldNode !== newNode) {
+      return function (DOMNode) {
+        var newDOMNode = (0, _render.default)(newNode);
+        DOMNode.replaceWith(newDOMNode);
+        return newDOMNode;
+      };
+    }
+
+    return function (DOMNode) {
+      return undefined;
+    };
+  }
+
+  if (oldNode.type !== newNode.type) {
+    return function (DOMNode) {
+      var newElementNode = (0, _render.default)(newNode);
+      DOMNode.replaceWith(newElementNode);
+      return newElementNode;
+    };
+  }
+
+  var patchChildren = diffChildren(oldNode.children, newNode.children);
+  return function (DOMNode) {
+    DOMNode = updateAttributes(oldNode.attributes, newNode.attributes, DOMNode);
+    patchChildren(DOMNode);
+    return DOMNode;
+  };
+};
+
+var _default = diff;
+exports.default = _default;
+},{"./render":"render.js"}],"script.js":[function(require,module,exports) {
 "use strict";
 
 var _render = _interopRequireDefault(require("./render"));
 
 var _mount = _interopRequireDefault(require("./mount"));
 
+var _diff = _interopRequireDefault(require("./diff"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var app = {
+var createVApp = function createVApp(count) {
+  return {
+    type: 'div',
+    attributes: {
+      datacount: count,
+      class: 'container'
+    },
+    children: [{
+      type: 'ul',
+      children: [{
+        type: 'li',
+        class: 'list-item',
+        children: ['apple']
+      }, {
+        type: 'li',
+        class: 'list-item',
+        children: ['oranges']
+      }, {
+        type: 'li',
+        class: 'list-item'
+      }]
+    }]
+  };
+};
+
+var state1 = {
   type: 'div',
   attributes: {
     class: 'container'
@@ -201,11 +396,59 @@ var app = {
       type: 'li',
       class: 'list-item',
       children: ['oranges']
+    }, {
+      type: 'li',
+      class: 'list-item'
     }]
   }]
 };
-var root = (0, _mount.default)((0, _render.default)(app), document.getElementById('app'));
-},{"./render":"render.js","./mount":"mount.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var state2 = {
+  type: 'div',
+  attributes: {
+    class: 'container'
+  },
+  children: [{
+    type: 'ul',
+    children: [{
+      type: 'div',
+      class: 'list-item',
+      children: ['apple']
+    }, {
+      type: 'li',
+      class: 'list-item',
+      children: ['oranges']
+    }, {
+      type: 'li',
+      class: 'list-item',
+      children: ['oranges']
+    }, {
+      type: 'li',
+      class: 'list-item',
+      children: ['oranges']
+    }, {
+      type: 'li',
+      class: 'list-item',
+      children: ['oranges']
+    }, {
+      type: 'li',
+      class: 'list-item',
+      children: ['oranges']
+    }]
+  }]
+}; // let oldApp = createVApp(0);
+
+var root = (0, _mount.default)((0, _render.default)(state1), document.getElementById('app')); // let count = 0;
+
+var patch = (0, _diff.default)(state1, state2);
+root = patch(root); // setInterval(() => {
+//   count++;
+//   const newApp = createVApp(count);
+//   // root = mount(render(newApp), root);
+//   const patch = diff(oldApp, newApp);
+//   root = patch(root);
+//   // oldApp = newApp;
+// }, 1000);
+},{"./render":"render.js","./mount":"mount.js","./diff":"diff.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -233,7 +476,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54318" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65081" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
