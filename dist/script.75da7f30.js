@@ -133,30 +133,71 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+var setStyle = function setStyle() {
+  var style = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var element = arguments.length > 1 ? arguments[1] : undefined;
+
+  for (var _i = 0, _Object$entries = Object.entries(style); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        key = _Object$entries$_i[0],
+        value = _Object$entries$_i[1];
+
+    element.style[key] = value;
+  }
+
+  return element;
+};
+
+var setEvents = function setEvents() {
+  var events = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var element = arguments.length > 1 ? arguments[1] : undefined;
+
+  for (var _i2 = 0, _Object$entries2 = Object.entries(events); _i2 < _Object$entries2.length; _i2++) {
+    var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
+        event = _Object$entries2$_i[0],
+        callback = _Object$entries2$_i[1];
+
+    element.addEventListener(event, callback);
+  }
+};
+
+var setChildren = function setChildren() {
+  var children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var element = arguments.length > 1 ? arguments[1] : undefined;
+  children.forEach(function (child) {
+    var childElement = render(child);
+    element.appendChild(childElement);
+  });
+};
+
+var setAttributes = function setAttributes() {
+  var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var element = arguments.length > 1 ? arguments[1] : undefined;
+
+  for (var _i3 = 0, _Object$entries3 = Object.entries(attributes); _i3 < _Object$entries3.length; _i3++) {
+    var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
+        key = _Object$entries3$_i[0],
+        value = _Object$entries3$_i[1];
+
+    element.setAttribute(key, value);
+  }
+};
+
 var render = function render(node) {
   if (typeof node === 'string') {
     return document.createTextNode(node);
   }
 
   var type = node.type,
-      _node$attributes = node.attributes,
-      attributes = _node$attributes === void 0 ? {} : _node$attributes,
-      _node$children = node.children,
-      children = _node$children === void 0 ? [] : _node$children;
+      attributes = node.attributes,
+      children = node.children,
+      events = node.events,
+      style = node.style;
   var element = document.createElement(type);
-
-  for (var _i = 0, _Object$entries = Object.entries(attributes); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-        key = _Object$entries$_i[0],
-        value = _Object$entries$_i[1];
-
-    element.setAttribute(key, value);
-  }
-
-  children.forEach(function (child) {
-    var childElement = render(child);
-    element.appendChild(childElement);
-  });
+  setAttributes(attributes, element);
+  setChildren(children, element);
+  setEvents(events, element);
+  setStyle(style, element);
   return element;
 };
 
@@ -345,7 +386,201 @@ var diff = function diff(oldNode, newNode) {
 
 var _default = diff;
 exports.default = _default;
-},{"./render":"render.js"}],"script.js":[function(require,module,exports) {
+},{"./render":"render.js"}],"element-tags.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p = exports.h3 = exports.h2 = exports.h1 = exports.custom = void 0;
+
+var custom = function custom(element, children) {
+  return {
+    type: element,
+    children: children
+  };
+};
+
+exports.custom = custom;
+
+var h1 = function h1(text) {
+  return {
+    type: 'h1',
+    children: [text]
+  };
+};
+
+exports.h1 = h1;
+
+var h2 = function h2(text) {
+  return {
+    type: 'h2',
+    children: [text]
+  };
+};
+
+exports.h2 = h2;
+
+var h3 = function h3(text) {
+  return {
+    type: 'h3',
+    children: [text]
+  };
+};
+
+exports.h3 = h3;
+
+var p = function p(text) {
+  return {
+    type: 'p',
+    children: [text]
+  };
+};
+
+exports.p = p;
+},{}],"../components/home.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _elementTags = require("../src/element-tags");
+
+var heading = {
+  type: 'h1',
+  style: {
+    'font-size': '60px',
+    color: '#bfe38b',
+    'text-align': 'center'
+  },
+  children: ['Q.JS']
+};
+var square = {
+  dragElement: function dragElement(e) {
+    var body = document.body;
+
+    if (square.drag) {
+      body.style['user-select'] = 'none';
+      var squareElement = document.querySelector('.square');
+      var x = e.clientX - square.offsetX - squareElement.offsetLeft;
+      var y = e.clientY - square.offsetY - squareElement.offsetTop; // if (x + 180 > body.clientWidth) {
+      //   x = body.clientWidth - 180;
+      // }
+      // if (x < 0) {
+      //   x = body.clientWidth + 180;
+      // }
+      // if (y + 40 > body.clientHeight) {
+      //   y = body.clientHeight - 40;
+      // }
+      // if (y < 0) {
+      //   y = body.clientHeight + 40;
+      // }
+
+      squareElement.style.transform = "translate(".concat(x, "px, ").concat(y, "px)");
+    }
+  },
+  type: 'div',
+  style: {
+    height: '40px',
+    width: '180px',
+    'background-color': 'red'
+  },
+  attributes: {
+    class: 'square'
+  },
+  drag: false,
+  offsetX: null,
+  offsetY: null,
+  events: {
+    mousedown: function mousedown(e) {
+      square.drag = true;
+      square.offsetX = e.offsetX;
+      square.offsetY = e.offsetY;
+      var body = document.body;
+      body.addEventListener('mousemove', function (e) {
+        return square.dragElement(e);
+      });
+    },
+    mouseup: function mouseup() {
+      var body = document.body;
+      body.style['user-select'] = 'auto';
+      square.drag = false;
+      body.removeEventListener('mousemove', function (e) {
+        return square.dragElement(e);
+      });
+    }
+  },
+  children: ['I dont really work atm']
+};
+var button = {
+  type: 'button',
+  attributes: {
+    type: 'button'
+  },
+  style: {
+    padding: '20px',
+    border: '1px solid black'
+  },
+  children: ['dont press this'],
+  events: {
+    click: function click() {
+      button.children = ['why'];
+    }
+  }
+};
+
+var textArticle = function textArticle(heading, text) {
+  return {
+    type: 'section',
+    style: {
+      width: '400px',
+      margin: '20px'
+    },
+    children: [(0, _elementTags.h3)(heading), (0, _elementTags.p)(text)]
+  };
+};
+
+var threeColumn = {
+  type: 'section',
+  style: {
+    display: 'flex',
+    'justify-content': 'space-between'
+  },
+  children: [textArticle('JSX vs HTML?', "neither. we're going pure javascript objects. Every component and DOM node will be written as an object. "), textArticle('Component based', 'Just like react and every other framework but a lot less powerful and a lot more messy'), textArticle('why', 'yes')]
+};
+var _default = {
+  type: 'div',
+  children: [heading, (0, _elementTags.h2)('a really bad Javascript library for building interfaces'), button, square, // square,
+  // square,
+  // square,
+  (0, _elementTags.h2)('Why would anyone use this'), threeColumn, (0, _elementTags.h2)('Get started'), (0, _elementTags.h2)('Documentation'), (0, _elementTags.h2)('To do')]
+};
+exports.default = _default;
+},{"../src/element-tags":"element-tags.js"}],"../components/App.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _home = _interopRequireDefault(require("./home"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var app = {
+  type: 'div',
+  attributes: {
+    class: 'container'
+  },
+  events: {},
+  children: [_home.default]
+};
+var _default = app;
+exports.default = _default;
+},{"./home":"../components/home.js"}],"script.js":[function(require,module,exports) {
 "use strict";
 
 var _render = _interopRequireDefault(require("./render"));
@@ -354,101 +589,26 @@ var _mount = _interopRequireDefault(require("./mount"));
 
 var _diff = _interopRequireDefault(require("./diff"));
 
+var _App = _interopRequireDefault(require("../components/App"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createVApp = function createVApp(count) {
-  return {
-    type: 'div',
-    attributes: {
-      datacount: count,
-      class: 'container'
-    },
-    children: [{
-      type: 'ul',
-      children: [{
-        type: 'li',
-        class: 'list-item',
-        children: ['apple']
-      }, {
-        type: 'li',
-        class: 'list-item',
-        children: ['oranges']
-      }, {
-        type: 'li',
-        class: 'list-item'
-      }]
-    }]
-  };
-};
-
-var state1 = {
-  type: 'div',
-  attributes: {
-    class: 'container'
-  },
-  children: [{
-    type: 'ul',
-    children: [{
-      type: 'li',
-      class: 'list-item',
-      children: ['apple']
-    }, {
-      type: 'li',
-      class: 'list-item',
-      children: ['oranges']
-    }, {
-      type: 'li',
-      class: 'list-item'
-    }]
-  }]
-};
-var state2 = {
-  type: 'div',
-  attributes: {
-    class: 'container'
-  },
-  children: [{
-    type: 'ul',
-    children: [{
-      type: 'div',
-      class: 'list-item',
-      children: ['apple']
-    }, {
-      type: 'li',
-      class: 'list-item',
-      children: ['oranges']
-    }, {
-      type: 'li',
-      class: 'list-item',
-      children: ['oranges']
-    }, {
-      type: 'li',
-      class: 'list-item',
-      children: ['oranges']
-    }, {
-      type: 'li',
-      class: 'list-item',
-      children: ['oranges']
-    }, {
-      type: 'li',
-      class: 'list-item',
-      children: ['oranges']
-    }]
-  }]
-}; // let oldApp = createVApp(0);
-
-var root = (0, _mount.default)((0, _render.default)(state1), document.getElementById('app')); // let count = 0;
-
-var patch = (0, _diff.default)(state1, state2);
-root = patch(root); // setInterval(() => {
-//   count++;
-//   const newApp = createVApp(count);
-//   // root = mount(render(newApp), root);
-//   const patch = diff(oldApp, newApp);
+var root = (0, _mount.default)((0, _render.default)(_App.default), document.getElementById('app'));
+var prevApp = JSON.parse(JSON.stringify(_App.default)); // const diffbtn = document.createElement('button');
+// diffbtn.textContent = 'diff me';
+// document.body.appendChild(diffbtn);
+// diffbtn.addEventListener('click', function() {
+//   const patch = diff(prevApp, app);
 //   root = patch(root);
-//   // oldApp = newApp;
-// }, 1000);
-},{"./render":"render.js","./mount":"mount.js","./diff":"diff.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+//   prevApp = JSON.parse(JSON.stringify(app));
+// });
+
+setInterval(function () {
+  var patch = (0, _diff.default)(prevApp, _App.default);
+  root = patch(root);
+  prevApp = JSON.parse(JSON.stringify(_App.default));
+}, 100);
+},{"./render":"render.js","./mount":"mount.js","./diff":"diff.js","../components/App":"../components/App.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -476,7 +636,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65081" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55821" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
