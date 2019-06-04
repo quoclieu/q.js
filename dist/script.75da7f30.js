@@ -247,22 +247,47 @@ var zip = function zip(xs, ys) {
   return zipped;
 };
 
+var updateStyles = function updateStyles() {
+  var oldStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var newStyle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var node = arguments.length > 2 ? arguments[2] : undefined;
+
+  for (var _i = 0, _Object$entries = Object.entries(oldStyle); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        key = _Object$entries$_i[0],
+        value = _Object$entries$_i[1];
+
+    node.style[key] = value;
+  }
+
+  for (var _i2 = 0, _Object$entries2 = Object.entries(oldStyle); _i2 < _Object$entries2.length; _i2++) {
+    var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 1),
+        key = _Object$entries2$_i[0];
+
+    if (!(key in newStyle)) {
+      node.removeProperty(key);
+    }
+  }
+
+  return node;
+};
+
 var updateAttributes = function updateAttributes() {
   var oldAtt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var newAtt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var node = arguments.length > 2 ? arguments[2] : undefined;
 
-  for (var _i = 0, _Object$entries = Object.entries(oldAtt); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-        key = _Object$entries$_i[0],
-        value = _Object$entries$_i[1];
+  for (var _i3 = 0, _Object$entries3 = Object.entries(oldAtt); _i3 < _Object$entries3.length; _i3++) {
+    var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
+        key = _Object$entries3$_i[0],
+        value = _Object$entries3$_i[1];
 
     node.setAttribute(key, value);
   }
 
-  for (var _i2 = 0, _Object$entries2 = Object.entries(oldAtt); _i2 < _Object$entries2.length; _i2++) {
-    var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 1),
-        key = _Object$entries2$_i[0];
+  for (var _i4 = 0, _Object$entries4 = Object.entries(oldAtt); _i4 < _Object$entries4.length; _i4++) {
+    var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 1),
+        key = _Object$entries4$_i[0];
 
     if (!(key in newAtt)) {
       node.removeAttribute(key);
@@ -379,6 +404,7 @@ var diff = function diff(oldNode, newNode) {
   var patchChildren = diffChildren(oldNode.children, newNode.children);
   return function (DOMNode) {
     DOMNode = updateAttributes(oldNode.attributes, newNode.attributes, DOMNode);
+    DOMNode = updateStyles(oldNode.style, newNode.style, DOMNode);
     patchChildren(DOMNode);
     return DOMNode;
   };
@@ -392,7 +418,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.p = exports.h3 = exports.h2 = exports.h1 = exports.custom = void 0;
+exports.p = exports.h4 = exports.h3 = exports.h2 = exports.h1 = exports.custom = void 0;
 
 var custom = function custom(element, children) {
   return {
@@ -403,40 +429,40 @@ var custom = function custom(element, children) {
 
 exports.custom = custom;
 
-var h1 = function h1(text) {
-  return {
-    type: 'h1',
-    children: [text]
+var createVirtualNode = function createVirtualNode(tag) {
+  return function () {
+    var children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref$style = _ref.style,
+        style = _ref$style === void 0 ? {} : _ref$style,
+        _ref$events = _ref.events,
+        events = _ref$events === void 0 ? {} : _ref$events,
+        _ref$props = _ref.props,
+        props = _ref$props === void 0 ? {} : _ref$props,
+        _ref$attributes = _ref.attributes,
+        attributes = _ref$attributes === void 0 ? {} : _ref$attributes;
+
+    return {
+      type: tag,
+      style: style,
+      events: events,
+      props: props,
+      attributes: attributes,
+      children: [children]
+    };
   };
 };
 
+var h1 = createVirtualNode('h1');
 exports.h1 = h1;
-
-var h2 = function h2(text) {
-  return {
-    type: 'h2',
-    children: [text]
-  };
-};
-
+var h2 = createVirtualNode('h2');
 exports.h2 = h2;
-
-var h3 = function h3(text) {
-  return {
-    type: 'h3',
-    children: [text]
-  };
-};
-
+var h3 = createVirtualNode('h3');
 exports.h3 = h3;
-
-var p = function p(text) {
-  return {
-    type: 'p',
-    children: [text]
-  };
-};
-
+var h4 = createVirtualNode('h4');
+exports.h4 = h4;
+var p = createVirtualNode('p');
 exports.p = p;
 },{}],"../components/home.js":[function(require,module,exports) {
 "use strict";
@@ -455,31 +481,12 @@ var heading = {
     color: '#bfe38b',
     'text-align': 'center'
   },
-  children: ['Q.JS']
+  children: ['q.JS']
 };
 var square = {
-  dragElement: function dragElement(e) {
-    var body = document.body;
-
-    if (square.drag) {
-      body.style['user-select'] = 'none';
-      var squareElement = document.querySelector('.square');
-      var x = e.clientX - square.offsetX - squareElement.offsetLeft;
-      var y = e.clientY - square.offsetY - squareElement.offsetTop; // if (x + 180 > body.clientWidth) {
-      //   x = body.clientWidth - 180;
-      // }
-      // if (x < 0) {
-      //   x = body.clientWidth + 180;
-      // }
-      // if (y + 40 > body.clientHeight) {
-      //   y = body.clientHeight - 40;
-      // }
-      // if (y < 0) {
-      //   y = body.clientHeight + 40;
-      // }
-
-      squareElement.style.transform = "translate(".concat(x, "px, ").concat(y, "px)");
-    }
+  function: function _function(a, b) {
+    this.a = a;
+    this.b = b;
   },
   type: 'div',
   style: {
@@ -490,29 +497,64 @@ var square = {
   attributes: {
     class: 'square'
   },
-  drag: false,
-  offsetX: null,
-  offsetY: null,
+  props: {
+    drag: false,
+    offsetX: null,
+    offsetY: null
+  },
   events: {
+    mouseenter: function mouseenter() {
+      square.style.cursor = 'grab';
+      square.style['background-color'] = 'blue';
+    },
     mousedown: function mousedown(e) {
-      square.drag = true;
-      square.offsetX = e.offsetX;
-      square.offsetY = e.offsetY;
+      square.style.cursor = 'grabbing';
+      square.props.drag = true;
+      square.props.offsetX = e.offsetX;
+      square.props.offsetY = e.offsetY;
       var body = document.body;
       body.addEventListener('mousemove', function (e) {
         return square.dragElement(e);
       });
+      body.addEventListener('mouseleave', function (e) {
+        body.style['user-select'] = 'auto';
+        square.props.drag = false;
+        body.removeEventListener('mousemove', function (e) {
+          return square.dragElement(e);
+        });
+      });
     },
     mouseup: function mouseup() {
+      square.style.cursor = 'grab';
       var body = document.body;
       body.style['user-select'] = 'auto';
-      square.drag = false;
+      square.props.drag = false;
       body.removeEventListener('mousemove', function (e) {
         return square.dragElement(e);
       });
     }
   },
-  children: ['I dont really work atm']
+  dragElement: function dragElement(e) {
+    var body = document.body;
+
+    if (square.props.drag) {
+      body.style['user-select'] = 'none';
+      var squareElement = document.querySelector('.square');
+      var x = e.pageX - square.props.offsetX - squareElement.offsetLeft;
+      var y = e.pageY - square.props.offsetY - squareElement.offsetTop;
+
+      if (x + 180 > body.clientWidth) {
+        x = body.clientWidth - 180;
+      }
+
+      if (x < 0) {
+        x = 0;
+      }
+
+      squareElement.style.transform = "translate(".concat(x, "px, ").concat(y, "px)");
+    }
+  },
+  children: ['drag me']
 };
 var button = {
   type: 'button',
@@ -530,32 +572,96 @@ var button = {
     }
   }
 };
+var toggleLightModeBtn = {
+  type: 'button',
+  attributes: {
+    type: 'button'
+  },
+  style: {
+    padding: '10px',
+    border: '1px solid black'
+  },
+  children: ['Toggle Dark Mode'],
+  props: {
+    darkMode: true
+  },
+  events: {
+    click: function click() {
+      if (toggleLightModeBtn.darkMode) {
+        toggleLightModeBtn.darkMode = false;
+        document.body.className = 'light-mode';
+      } else {
+        toggleLightModeBtn.darkMode = true;
+        document.body.className = '';
+      }
+    }
+  }
+};
 
-var textArticle = function textArticle(heading, text) {
+var createbutton = function createbutton(_ref) {
+  var _ref$style = _ref.style,
+      style = _ref$style === void 0 ? {} : _ref$style,
+      _ref$text = _ref.text,
+      text = _ref$text === void 0 ? '' : _ref$text;
   return {
-    type: 'section',
-    style: {
-      width: '400px',
-      margin: '20px'
+    type: 'button',
+    attributes: {
+      type: 'button'
     },
-    children: [(0, _elementTags.h3)(heading), (0, _elementTags.p)(text)]
+    style: {},
+    children: [text]
   };
 };
 
-var threeColumn = {
-  type: 'section',
-  style: {
-    display: 'flex',
-    'justify-content': 'space-between'
-  },
-  children: [textArticle('JSX vs HTML?', "neither. we're going pure javascript objects. Every component and DOM node will be written as an object. "), textArticle('Component based', 'Just like react and every other framework but a lot less powerful and a lot more messy'), textArticle('why', 'yes')]
+var codeBlock = function codeBlock(code) {
+  return {
+    type: 'code',
+    children: [code]
+  };
 };
+
+var article = function article(h, t) {
+  return {
+    type: 'section',
+    style: {
+      margin: '20px',
+      'flex-grow': 1,
+      'flex-shrink': 1,
+      'flex-basis': 0,
+      'text-align': 'left'
+    },
+    children: [(0, _elementTags.h3)(h, {
+      style: {
+        'text-align': 'center'
+      }
+    }), (0, _elementTags.p)(t)]
+  };
+};
+
+var columns = function columns(children) {
+  return {
+    type: 'section',
+    style: {
+      display: 'flex',
+      'justify-content': 'space-between'
+    },
+    children: children
+  };
+};
+
+var libraryDescription = columns([article('JSX vs HTML?', "Neither. we're going pure javascript objects. Every component and DOM node will be written as an object. "), article('Component based', 'Components can be built much quicker, more intuitive, less files, less libraries '), article('SPA', "Built to make really simple single page applications. Theres no routing because I don't know how to build it. It's a feature.")]);
+var noHtml = article('No HTML or JSX', 'Everything is constructed from virtual nodes(Javascript Objects). Each virtual must contain a type or a text string for text nodes. Your virtual node can take in styles, attributes such as classes and ids, props, Javascript events and other children virtual nodes.All HTML5 elements can be rendered through the prebuilt functions.');
+var noCSS = article('Styling', 'q.JS has one global style sheet. Component styling is done inline. Following the atomic css pattern is also a good idea.');
+var rendering = article('Rendering', 'Combine all your components into a single export. Import it into the App.js file and render it in the children');
+var components = article('Components', 'All components are built using javascript objects.'); // const codeExample = () => {
+//   square =  {}'
+// }
+
 var _default = {
   type: 'div',
-  children: [heading, (0, _elementTags.h2)('a really bad Javascript library for building interfaces'), button, square, // square,
-  // square,
-  // square,
-  (0, _elementTags.h2)('Why would anyone use this'), threeColumn, (0, _elementTags.h2)('Get started'), (0, _elementTags.h2)('Documentation'), (0, _elementTags.h2)('To do')]
+  children: [heading, toggleLightModeBtn, // square,
+  (0, _elementTags.h2)('a really bad Javascript library for building interfaces'), // button,
+  (0, _elementTags.h2)('Why would anyone use this'), libraryDescription, columns([noHtml]), rendering, (0, _elementTags.h2)('Get started'), (0, _elementTags.h2)('Documentation'), (0, _elementTags.h2)('Try it out'), (0, _elementTags.h2)('To do')]
 };
 exports.default = _default;
 },{"../src/element-tags":"element-tags.js"}],"../components/App.js":[function(require,module,exports) {
@@ -575,7 +681,6 @@ var app = {
   attributes: {
     class: 'container'
   },
-  events: {},
   children: [_home.default]
 };
 var _default = app;
@@ -636,7 +741,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55821" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50859" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -8,6 +8,18 @@ const zip = (xs, ys) => {
   return zipped;
 };
 
+const updateStyles = (oldStyle = {}, newStyle = {}, node) => {
+  for (const [key, value] of Object.entries(oldStyle)) {
+    node.style[key] = value;
+  }
+  for (const [key] of Object.entries(oldStyle)) {
+    if (!(key in newStyle)) {
+      node.removeProperty(key);
+    }
+  }
+  return node;
+};
+
 const updateAttributes = (oldAtt = {}, newAtt = {}, node) => {
   for (const [key, value] of Object.entries(oldAtt)) {
     node.setAttribute(key, value);
@@ -76,6 +88,7 @@ const diff = (oldNode, newNode) => {
 
   return DOMNode => {
     DOMNode = updateAttributes(oldNode.attributes, newNode.attributes, DOMNode);
+    DOMNode = updateStyles(oldNode.style, newNode.style, DOMNode);
     patchChildren(DOMNode);
     return DOMNode;
   };

@@ -5,7 +5,6 @@ const app = {
   attributes: {
     class: 'container'
   },
-  events: {},
   children: [home]
 };
 

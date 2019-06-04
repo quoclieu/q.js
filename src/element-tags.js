@@ -5,30 +5,24 @@ export const custom = (element, children) => {
   };
 };
 
-export const h1 = text => {
-  return {
-    type: 'h1',
-    children: [text]
+const createVirtualNode = tag => {
+  return (
+    children = '',
+    { style = {}, events = {}, props = {}, attributes = {} } = {}
+  ) => {
+    return {
+      type: tag,
+      style,
+      events,
+      props,
+      attributes,
+      children: [children]
+    };
   };
 };
 
-export const h2 = text => {
-  return {
-    type: 'h2',
-    children: [text]
-  };
-};
-
-export const h3 = text => {
-  return {
-    type: 'h3',
-    children: [text]
-  };
-};
-
-export const p = text => {
-  return {
-    type: 'p',
-    children: [text]
-  };
-};
+export const h1 = createVirtualNode('h1');
+export const h2 = createVirtualNode('h2');
+export const h3 = createVirtualNode('h3');
+export const h4 = createVirtualNode('h4');
+export const p = createVirtualNode('p');
