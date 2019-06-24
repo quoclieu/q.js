@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"render.js":[function(require,module,exports) {
+})({"../q.js/render.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -203,21 +203,7 @@ var render = function render(node) {
 
 var _default = render;
 exports.default = _default;
-},{}],"mount.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _default = function _default(nodeElement, target) {
-  target.replaceWith(nodeElement);
-  return nodeElement;
-};
-
-exports.default = _default;
-},{}],"diff.js":[function(require,module,exports) {
+},{}],"../q.js/diff.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -412,7 +398,21 @@ var diff = function diff(oldNode, newNode) {
 
 var _default = diff;
 exports.default = _default;
-},{"./render":"render.js"}],"element-tags.js":[function(require,module,exports) {
+},{"./render":"../q.js/render.js"}],"../q.js/mount.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(nodeElement, target) {
+  target.replaceWith(nodeElement);
+  return nodeElement;
+};
+
+exports.default = _default;
+},{}],"../q.js/element-tags.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -464,6 +464,101 @@ var h4 = createVirtualNode('h4');
 exports.h4 = h4;
 var p = createVirtualNode('p');
 exports.p = p;
+},{}],"../q.js/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _exportNames = {
+  diff: true,
+  mount: true,
+  render: true
+};
+Object.defineProperty(exports, "diff", {
+  enumerable: true,
+  get: function () {
+    return _diff.default;
+  }
+});
+Object.defineProperty(exports, "mount", {
+  enumerable: true,
+  get: function () {
+    return _mount.default;
+  }
+});
+Object.defineProperty(exports, "render", {
+  enumerable: true,
+  get: function () {
+    return _render.default;
+  }
+});
+
+var _diff = _interopRequireDefault(require("./diff"));
+
+var _mount = _interopRequireDefault(require("./mount"));
+
+var _render = _interopRequireDefault(require("./render"));
+
+var _elementTags = require("./element-tags");
+
+Object.keys(_elementTags).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _elementTags[key];
+    }
+  });
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./diff":"../q.js/diff.js","./mount":"../q.js/mount.js","./render":"../q.js/render.js","./element-tags":"../q.js/element-tags.js"}],"../components/Shape.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Shape =
+/*#__PURE__*/
+function () {
+  function Shape(height, width) {
+    _classCallCheck(this, Shape);
+
+    this.height = height;
+    this.width = width;
+  }
+
+  _createClass(Shape, [{
+    key: "create",
+    value: function create() {
+      return {
+        type: 'div',
+        attributes: {
+          class: 'container'
+        },
+        style: {
+          backgroundColor: 'red',
+          height: this.height + 'px',
+          width: this.width + 'px'
+        }
+      };
+    }
+  }]);
+
+  return Shape;
+}();
+
+exports.default = Shape;
 },{}],"../components/home.js":[function(require,module,exports) {
 "use strict";
 
@@ -472,7 +567,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _elementTags = require("../src/element-tags");
+var _q = require("../q.js");
+
+var _Shape = _interopRequireDefault(require("./Shape"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var heading = {
   type: 'h1',
@@ -630,11 +729,11 @@ var article = function article(h, t) {
       'flex-basis': 0,
       'text-align': 'left'
     },
-    children: [(0, _elementTags.h3)(h, {
+    children: [(0, _q.h3)(h, {
       style: {
         'text-align': 'center'
       }
-    }), (0, _elementTags.p)(t)]
+    }), (0, _q.p)(t)]
   };
 };
 
@@ -654,12 +753,13 @@ var noHtml = article('No HTML or JSX', 'Everything is constructed from virtual n
 var noCSS = article('Styling', 'q.JS has one global style sheet. Component styling is done inline. Following the atomic css pattern is also a good idea.');
 var rendering = article('Rendering', 'Combine all your components into a single export. Import it into the App.js file and render it in the children');
 var components = article('Components', 'All components are built using javascript objects.');
+var someShape = new _Shape.default(30, 40).create();
 var _default = {
   type: 'div',
-  children: [heading, toggleLightModeBtn, square, (0, _elementTags.h2)('a really bad Javascript library for building simple interfaces'), button, (0, _elementTags.h2)('Why would anyone use this'), libraryDescription, columns([noHtml]), rendering, (0, _elementTags.h2)('Get started'), (0, _elementTags.h2)('Documentation'), (0, _elementTags.h2)('Try it out'), (0, _elementTags.h2)('To do')]
+  children: [someShape, heading, toggleLightModeBtn, square, (0, _q.h2)('a really bad Javascript library for building simple interfaces'), button, (0, _q.h2)('Why would anyone use this'), libraryDescription, columns([noHtml]), rendering, (0, _q.h2)('Get started'), (0, _q.h2)('Documentation'), (0, _q.h2)('Try it out'), (0, _q.h2)('To do')]
 };
 exports.default = _default;
-},{"../src/element-tags":"element-tags.js"}],"../components/App.js":[function(require,module,exports) {
+},{"../q.js":"../q.js/index.js","./Shape":"../components/Shape.js"}],"../components/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -680,27 +780,23 @@ var app = {
 };
 var _default = app;
 exports.default = _default;
-},{"./home":"../components/home.js"}],"script.js":[function(require,module,exports) {
+},{"./home":"../components/home.js"}],"app.js":[function(require,module,exports) {
 "use strict";
 
-var _render = _interopRequireDefault(require("./render"));
-
-var _mount = _interopRequireDefault(require("./mount"));
-
-var _diff = _interopRequireDefault(require("./diff"));
+var _q = require("../q.js");
 
 var _App = _interopRequireDefault(require("../components/App"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var root = (0, _mount.default)((0, _render.default)(_App.default), document.getElementById('app'));
+var root = (0, _q.mount)((0, _q.render)(_App.default), document.getElementById('app'));
 var prevApp = JSON.parse(JSON.stringify(_App.default));
 setInterval(function () {
-  var patch = (0, _diff.default)(prevApp, _App.default);
+  var patch = (0, _q.diff)(prevApp, _App.default);
   root = patch(root);
   prevApp = JSON.parse(JSON.stringify(_App.default));
 }, 100);
-},{"./render":"render.js","./mount":"mount.js","./diff":"diff.js","../components/App":"../components/App.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../q.js":"../q.js/index.js","../components/App":"../components/App.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -728,7 +824,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55351" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62713" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -903,5 +999,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","script.js"], null)
-//# sourceMappingURL=/script.75da7f30.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","app.js"], null)
+//# sourceMappingURL=/app.c328ef1a.js.map

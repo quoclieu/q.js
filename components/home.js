@@ -1,4 +1,5 @@
-import { p, h2, h3 } from '../src/element-tags';
+import { p, h2, h3 } from '../q.js';
+import Shape from './Shape';
 
 const heading = {
   type: 'h1',
@@ -195,19 +196,17 @@ const components = article(
   'All components are built using javascript objects.'
 );
 
-// const codeExample = () => {
-//   square =  {}'
-
-// }
+const someShape = new Shape(30, 40).create();
 
 export default {
   type: 'div',
   children: [
+    someShape,
     heading,
     toggleLightModeBtn,
-    // square,
-    h2('a really bad Javascript library for building interfaces'),
-    // button,
+    square,
+    h2('a really bad Javascript library for building simple interfaces'),
+    button,
     h2('Why would anyone use this'),
     libraryDescription,
     columns([noHtml]),
