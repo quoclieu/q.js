@@ -748,15 +748,18 @@ var columns = function columns(children) {
   };
 };
 
-var libraryDescription = columns([article('JSX vs HTML?', "Neither. we're going pure javascript objects. Every component and DOM node will be written as an object. "), article('Component based', 'Components can be built much quicker, more intuitive, less files, less libraries '), article('SPA', "Built to make really simple single page applications. Theres no routing because I don't know how to build it. It's a feature.")]);
+var libraryDescription = columns([article('JSX vs HTML?', "Neither. we're going pure javascript objects. Every component and DOM node will be written as an object. "), article('Component based', 'Components can be built much quicker, more intuitive, less files, less libraries '), article('SPA', 'Built to make really simple single page applications.')]);
 var noHtml = article('No HTML or JSX', 'Everything is constructed from virtual nodes(Javascript Objects). Each virtual must contain a type or a text string for text nodes. Your virtual node can take in styles, attributes such as classes and ids, props, Javascript events and other children virtual nodes.All HTML5 elements can be rendered through the prebuilt functions.');
-var noCSS = article('Styling', 'q.JS has one global style sheet. Component styling is done inline. Following the atomic css pattern is also a good idea.');
 var rendering = article('Rendering', 'Combine all your components into a single export. Import it into the App.js file and render it in the children');
-var components = article('Components', 'All components are built using javascript objects.');
 var someShape = new _Shape.default(30, 40).create();
 var _default = {
   type: 'div',
-  children: [someShape, heading, toggleLightModeBtn, square, (0, _q.h2)('a really bad Javascript library for building simple interfaces'), button, (0, _q.h2)('Why would anyone use this'), libraryDescription, columns([noHtml]), rendering, (0, _q.h2)('Get started'), (0, _q.h2)('Documentation'), (0, _q.h2)('Try it out'), (0, _q.h2)('To do')]
+  children: [// someShape,
+  heading, toggleLightModeBtn, square, (0, _q.h2)('a really OK Javascript library for building simple interfaces'), button, libraryDescription, columns([noHtml]), rendering // h2('Get started'),
+  // h2('Documentation'),
+  // h2('Try it out'),
+  // h2('To do')
+  ]
 };
 exports.default = _default;
 },{"../q.js":"../q.js/index.js","./Shape":"../components/Shape.js"}],"../components/App.js":[function(require,module,exports) {
@@ -824,7 +827,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62713" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58008" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

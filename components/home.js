@@ -170,10 +170,7 @@ const libraryDescription = columns([
     'Component based',
     'Components can be built much quicker, more intuitive, less files, less libraries '
   ),
-  article(
-    'SPA',
-    "Built to make really simple single page applications. Theres no routing because I don't know how to build it. It's a feature."
-  )
+  article('SPA', 'Built to make really simple single page applications.')
 ]);
 
 const noHtml = article(
@@ -181,19 +178,9 @@ const noHtml = article(
   'Everything is constructed from virtual nodes(Javascript Objects). Each virtual must contain a type or a text string for text nodes. Your virtual node can take in styles, attributes such as classes and ids, props, Javascript events and other children virtual nodes.All HTML5 elements can be rendered through the prebuilt functions.'
 );
 
-const noCSS = article(
-  'Styling',
-  'q.JS has one global style sheet. Component styling is done inline. Following the atomic css pattern is also a good idea.'
-);
-
 const rendering = article(
   'Rendering',
   'Combine all your components into a single export. Import it into the App.js file and render it in the children'
-);
-
-const components = article(
-  'Components',
-  'All components are built using javascript objects.'
 );
 
 const someShape = new Shape(30, 40).create();
@@ -201,20 +188,19 @@ const someShape = new Shape(30, 40).create();
 export default {
   type: 'div',
   children: [
-    someShape,
+    // someShape,
     heading,
     toggleLightModeBtn,
     square,
-    h2('a really bad Javascript library for building simple interfaces'),
+    h2('a really OK Javascript library for building simple interfaces'),
     button,
-    h2('Why would anyone use this'),
     libraryDescription,
     columns([noHtml]),
-    rendering,
-    h2('Get started'),
+    rendering
+    // h2('Get started'),
 
-    h2('Documentation'),
-    h2('Try it out'),
-    h2('To do')
+    // h2('Documentation'),
+    // h2('Try it out'),
+    // h2('To do')
   ]
 };
